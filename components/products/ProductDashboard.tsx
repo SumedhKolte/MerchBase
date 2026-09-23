@@ -15,6 +15,7 @@ import { useRowSelection } from "@/hooks/useRowSelection";
 import { useViewMode } from "@/hooks/useViewMode";
 import { cn } from "@/lib/cn";
 import { downloadCsv, productsToCsv } from "@/lib/csv";
+import { formatCategory, formatNumber } from "@/lib/format";
 import { applyOverlay, getMatchingDrafts } from "@/lib/overlay";
 import type { Product } from "@/types/product";
 import { BulkActionBar } from "./BulkActionBar";
@@ -29,6 +30,25 @@ import { ProductsSkeleton } from "./ProductsSkeleton";
 import { ProductTable } from "./ProductTable";
 import { ProductToolbar } from "./ProductToolbar";
 import { ShortcutsDialog } from "./ShortcutsDialog";
+
+/** One-line summary of what the list is showing, e.g. "16 products in Smartphones". */
+function describeView(
+  { q, category }: { q: string; category: string | null },
+  total: number | null,
+  categoryCount: number,
+) {
+  const count = total === null ? null : formatNumber(total);
+  const noun = (singular: string) => (total === 1 ? singular : `${singular}s`);
+  if (q) return count === null ? `Searching for “${q}”…` : `${count} ${noun("result")} for “${q}”`;
+  if (category) {
+    const name = formatCategory(category);
+    return count === null ? `Loading ${name}…` : `${count} ${noun("product")} in ${name}`;
+  }
+  if (count === null) return "Loading your catalog…";
+  return categoryCount > 0
+    ? `${count} products across ${categoryCount} categories`
+    : `${count} products`;
+}
 
 export function ProductDashboard() {
   const { params, setSearch, setCategory, setPage, setLimit, setSort, clearFilters } =
@@ -153,27 +173,30 @@ export function ProductDashboard() {
         <div>
           <p className="text-xs font-semibold tracking-widest text-accent uppercase">Catalog</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Products</h1>
-          <p className="mt-2 text-sm text-fg-muted">
-            Search, filter, and manage your catalog.{" "}
-            <button
-              type="button"
-              onClick={() => setIsShortcutsOpen(true)}
-              className="inline-flex items-center gap-1 rounded text-fg-subtle underline-offset-2 hover:text-fg hover:underline focus-visible:outline-2 focus-visible:outline-accent"
-            >
-              <Keyboard className="size-3.5" aria-hidden />
-              Shortcuts <kbd className="font-mono text-xs">?</kbd>
-            </button>
+          <p className="mt-2 text-sm text-fg-muted" aria-live="polite">
+            {describeView(params, isLoading ? null : (data?.total ?? null), categories.length)}
           </p>
         </div>
-        <Button
-          variant="primary"
-          shape="pill"
-          onClick={() => setFormTarget("new")}
-          aria-keyshortcuts="n"
-        >
-          <Plus className="size-4" aria-hidden />
-          Add product
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            shape="pill"
+            onClick={() => setIsShortcutsOpen(true)}
+            aria-label="Keyboard shortcuts"
+            aria-keyshortcuts="?"
+            title="Keyboard shortcuts (?)"
+          >
+            <Keyboard className="size-4" aria-hidden />
+          </Button>
+          <Button
+            variant="primary"
+            shape="pill"
+            onClick={() => setFormTarget("new")}
+            aria-keyshortcuts="n"
+          >
+            <Plus className="size-4" aria-hidden />
+            Add product
+          </Button>
+        </div>
       </header>
 
       <MetricsStrip

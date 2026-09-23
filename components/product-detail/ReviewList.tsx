@@ -5,6 +5,16 @@ import type { Review } from "@/types/product";
 
 const STAR_VALUES = [5, 4, 3, 2, 1];
 
+/** "Layla Young" → "LY" */
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
 function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex" role="img" aria-label={`Rated ${rating} out of 5`}>
@@ -77,7 +87,15 @@ export function ReviewList({ reviews }: { reviews: Review[] }) {
               </time>
             </div>
             <p className="mt-3 text-sm">“{review.comment}”</p>
-            <p className="mt-3 text-xs font-medium text-fg-muted">{review.reviewerName}</p>
+            <p className="mt-4 flex items-center gap-2 text-xs font-medium text-fg-muted">
+              <span
+                aria-hidden
+                className="flex size-6 items-center justify-center rounded-full bg-accent-soft text-[10px] font-semibold text-accent"
+              >
+                {initials(review.reviewerName)}
+              </span>
+              {review.reviewerName}
+            </p>
           </li>
         ))}
       </ul>

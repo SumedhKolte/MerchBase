@@ -100,6 +100,8 @@ export function ProductDetail({ id }: { id: string }) {
   const { product } = state;
   const images = product.images.length > 0 ? product.images : [product.thumbnail].filter(Boolean);
   const specs = getSpecs(product).filter(([, value]) => value);
+  // Whole percentages, matching the list cards (the API returns e.g. 1.89).
+  const discount = Math.round(product.discountPercentage ?? 0);
 
   return (
     <article className="space-y-8">
@@ -112,8 +114,11 @@ export function ProductDetail({ id }: { id: string }) {
         </Button>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <ImageGallery images={images} title={product.title} />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        {/* Sticky on desktop so the image stays in view beside the long spec column. */}
+        <div className="lg:sticky lg:top-20 lg:self-start">
+          <ImageGallery images={images} title={product.title} />
+        </div>
 
         <div className="space-y-6">
           <div>
@@ -127,9 +132,7 @@ export function ProductDetail({ id }: { id: string }) {
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <p className="text-3xl font-semibold tabular-nums">{formatCurrency(product.price)}</p>
-            {Boolean(product.discountPercentage) && (
-              <Badge tone="success">{product.discountPercentage}% off</Badge>
-            )}
+            {discount > 0 && <Badge tone="success">{discount}% off</Badge>}
             <span className="text-sm text-fg-muted">
               <Rating value={product.rating} />
             </span>
@@ -216,8 +219,8 @@ function DetailSkeleton() {
   return (
     <div role="status" aria-label="Loading product" className="space-y-8">
       <Skeleton className="h-8 w-40" />
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Skeleton className="aspect-square rounded-xl" />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <Skeleton className="aspect-[4/3] rounded-2xl" />
         <div className="space-y-4">
           <Skeleton className="h-5 w-24" />
           <Skeleton className="h-9 w-3/4" />

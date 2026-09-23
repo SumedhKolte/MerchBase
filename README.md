@@ -40,4 +40,5 @@ so automated clicks appear to "not register". It is browser UI, not an app bug. 
 either use Playwright's bundled Chromium (no Google Password Manager), dismiss the dialog, or create
 the session via `POST https://dummyjson.com/auth/login` and set the `mb_token` cookie plus the
 `mb_user` localStorage entry directly.
+
 # MerchBase

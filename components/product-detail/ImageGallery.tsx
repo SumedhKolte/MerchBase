@@ -11,7 +11,7 @@ export function ImageGallery({ images, title }: { images: string[]; title: strin
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-square overflow-hidden rounded-xl border border-line bg-surface">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-surface">
         {activeImage ? (
           <Image
             src={activeImage}

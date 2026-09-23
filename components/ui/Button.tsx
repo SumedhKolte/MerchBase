@@ -63,6 +63,8 @@ export function Button({
   return (
     <button
       type={type}
+      // Stops Firefox restoring a stale `disabled` state on reload (see types/react-button-autocomplete.d.ts).
+      autoComplete="off"
       disabled={disabled || isLoading}
       aria-busy={isLoading || undefined}
       className={cn(buttonClasses(variant, size, shape), className)}

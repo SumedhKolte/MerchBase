@@ -61,6 +61,17 @@ body {
   @apply bg-canvas text-fg;
 }
 
+/*
+ * Faint grid used as a background motif (dashboard header, login panel).
+ * The line color comes from --grid-line so each surface can tune it.
+ */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line, var(--line)) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line, var(--line)) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+}
+
 /* Reserve the scrollbar's space so locking scroll (below) doesn't shift the layout. */
 html {
   scrollbar-gutter: stable;

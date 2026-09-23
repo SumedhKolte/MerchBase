@@ -35,8 +35,13 @@ export function CategoryRail(props: CategoryNavProps) {
       aria-label="Categories"
       className="sticky top-20 hidden max-h-[calc(100dvh-6rem)] self-start overflow-y-auto pr-1 [scrollbar-color:var(--line)_transparent] [scrollbar-width:thin] xl:block"
     >
-      <p className="mb-2 px-3 text-xs font-medium tracking-widest text-fg-subtle uppercase">
+      <p className="mb-2 flex items-center justify-between px-3 text-xs font-medium tracking-widest text-fg-subtle uppercase">
         Categories
+        {!isLoading && (
+          <span className="rounded-full bg-surface-muted px-2 py-0.5 tracking-normal tabular-nums">
+            {props.categories.length}
+          </span>
+        )}
       </p>
       {props.isSearchActive && (
         <p className="mx-3 mb-2 flex items-start gap-1.5 text-xs text-sky-700 dark:text-sky-400">
